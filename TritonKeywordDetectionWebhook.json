@@ -152,7 +152,7 @@
         "id": "8ec13fee6ab3c5e3",
         "type": "function",
         "z": "f6f2187d.f17ca8",
-        "name": "Calculate lenght of fire warning",
+        "name": "Calculate lenght of warning",
         "func": "let messages = msg.payload.audio_messages;\n\nif (messages) {\n    // Find the directory with directoryNumber \"700\"\n    let directory700 = messages.find(d => d.dirno === \"700\");\n\n    if (directory700) {\n        // If found, set msg.payload to just the duration\n        msg.payload = directory700.duration;\n        msg.delay=directory700.duration;\n    } else {\n        // If directory number 700 not found\n        msg.payload = { error: \"Directory number 700 not found\" };\n    }\n} else {\n    // If \"directories\" is not found in the response\n    msg.payload = { error: \"'directories' array not found\" };\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
