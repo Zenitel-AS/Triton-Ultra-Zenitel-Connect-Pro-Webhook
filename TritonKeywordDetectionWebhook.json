@@ -1,0 +1,189 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "TritonWebhook",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "149750a43965d8bb",
+        "type": "wamp call",
+        "z": "f6f2187d.f17ca8",
+        "router": "e19250ea171d55f9",
+        "procedure": "com.zenitel.calls.post",
+        "name": "",
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "8c13880025461cd6"
+            ]
+        ]
+    },
+    {
+        "id": "23cd1a9e3f34fa91",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Call",
+        "func": "// Extract the payload\nconst v = msg.payload;\n\n\n// Initialize variables\n\nlet dira = \"700\";\nlet dirb = \"1001\";\n\n    msg = {\n        topic: 'com.zenitel.calls.post',\n        payload: {\n            'from_dirno': dira,\n            'to_dirno': dirb,\n            'action': 'setup',\n            'verbose': false\n        }\n    };\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 240,
+        "wires": [
+            [
+                "149750a43965d8bb"
+            ]
+        ]
+    },
+    {
+        "id": "094d0d50444acf94",
+        "type": "delay",
+        "z": "f6f2187d.f17ca8",
+        "name": "Audio warning delay",
+        "pauseType": "delayv",
+        "timeout": "8",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1060,
+        "y": 540,
+        "wires": [
+            [
+                "c5def99fec66495f"
+            ]
+        ]
+    },
+    {
+        "id": "66785c966ff46efe",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Call",
+        "func": "// Extract the payload\nconst v = msg.payload;\n\n\n// Initialize variables\n\nlet dira = \"1001\";\nlet dirb = \"1000\";\n\n    msg = {\n        topic: 'com.zenitel.calls.post',\n        payload: {\n            'from_dirno': dira,\n            'to_dirno': dirb,\n            'action': 'setup',\n            'verbose': false\n        }\n    };\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 540,
+        "wires": [
+            [
+                "094d0d50444acf94"
+            ]
+        ]
+    },
+    {
+        "id": "c5def99fec66495f",
+        "type": "wamp call",
+        "z": "f6f2187d.f17ca8",
+        "router": "e19250ea171d55f9",
+        "procedure": "com.zenitel.calls.post",
+        "name": "",
+        "x": 940,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b2a87139287de7b0",
+        "type": "http in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "url": "/triton",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 240,
+        "wires": [
+            [
+                "23cd1a9e3f34fa91",
+                "803a24be03b09290"
+            ]
+        ]
+    },
+    {
+        "id": "803a24be03b09290",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 280,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "8c13880025461cd6",
+        "type": "wamp call",
+        "z": "f6f2187d.f17ca8",
+        "router": "0da727c664b1f238",
+        "procedure": "com.zenitel.system.audio_messages",
+        "name": "",
+        "x": 230,
+        "y": 540,
+        "wires": [
+            [
+                "8ec13fee6ab3c5e3"
+            ]
+        ]
+    },
+    {
+        "id": "8ec13fee6ab3c5e3",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Calculate lenght of fire warning",
+        "func": "let messages = msg.payload.audio_messages;\n\nif (messages) {\n    // Find the directory with directoryNumber \"700\"\n    let directory700 = messages.find(d => d.dirno === \"700\");\n\n    if (directory700) {\n        // If found, set msg.payload to just the duration\n        msg.payload = directory700.duration;\n        msg.delay=directory700.duration;\n    } else {\n        // If directory number 700 not found\n        msg.payload = { error: \"Directory number 700 not found\" };\n    }\n} else {\n    // If \"directories\" is not found in the response\n    msg.payload = { error: \"'directories' array not found\" };\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 540,
+        "wires": [
+            [
+                "66785c966ff46efe"
+            ]
+        ]
+    },
+    {
+        "id": "e19250ea171d55f9",
+        "type": "wamp-client",
+        "address": "",
+        "realm": "",
+        "authId": "i",
+        "password": "",
+        "name": ""
+    },
+    {
+        "id": "0da727c664b1f238",
+        "type": "wamp-client",
+        "address": "",
+        "realm": "",
+        "authId": "",
+        "password": "",
+        "name": ""
+    }
+]
